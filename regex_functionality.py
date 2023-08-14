@@ -18,8 +18,6 @@ def is_nas_trade(message: str):
     entry_exp = "^ENTRY:( *)(?P<entry_px>[0-9]*)"
     entry_px_m = re.search(entry_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
-    
-
     # If entry price not found
     if not entry_px_m or entry_px_m['entry_px'] == '':
         return None
