@@ -90,7 +90,7 @@ class TestRecognitionParsing(unittest.TestCase):
 
         self.assertEqual(m_asset, 'NAS100')
         self.assertEqual(m_order_side, 'BUY')
-        self.assertIsNone(m_order_type)
+        self.assertEqual(m_order_type, 'LIMIT')
 
     def test_differing_asset(self):
         m_object = is_nas_trade(self.test_message3)
@@ -98,8 +98,52 @@ class TestRecognitionParsing(unittest.TestCase):
         self.assertIsNone(m_object)
 
     def test_only_order_type_no_side(self):
+        m_object = is_nas_trade(self.no_trade_side_message2)
+
+        self.assertIsNone(m_object)
+
+    def test_no_stop_provided(self):
+        test_message = "FREEDOM GBP/XAU SIGNALS, [8/3/2023 11:26 AM]" + "\n" +\
+                             "NAS100 SELL LIMIT" + "\n" +\
+                             "ENTRY:15415" + "\n" +\
+                             "TP1:15395" + "\n" +\
+                             "TP2:15375" + "\n" +\
+                             "TP3:15355" + "\n" +\
+                             "TP4: 15335"
+        
+        m_object = is_nas_trade(test_message)
+
+        self.assertIsNone(m_object)
+
+    def test_entry_price_as_empty_string(self):
+        test_message = "FREEDOM GBP/XAU SIGNALS, [8/3/2023 11:26 AM]" + "\n" +\
+                             "NAS100 SELL LIMIT" + "\n" +\
+                             "ENTRY:" + "\n" +\
+                             "TP1:15395" + "\n" +\
+                             "TP2:15375" + "\n" +\
+                             "TP3:15355" + "\n" +\
+                             "TP4: 15335"
+        
+        m_object = is_nas_trade(test_message)
+
+    def test_multispace_entry_price(self):
+        test_message = "FREEDOM GBP/XAU SIGNALS, [8/3/2023 11:26 AM]" + "\n" +\
+                             "NAS100 SELL LIMIT" + "\n" +\
+                             "ENTRY:      15400" + "\n" +\
+                             "TP1:15395" + "\n" +\
+                             "TP2:15375" + "\n" +\
+                             "TP3:15355" + "\n" +\
+                             "TP4: 15335"
+        
+        m_object = is_nas_trade(test_message)
+
+
+
+    def test_no_take_profit_provided(self):
         pass
 
+    def test_spaced_tp4(self):
+        pass
 
 if __name__ == "__main__":
     unittest.main()

@@ -15,7 +15,7 @@ def is_nas_trade(message: str):
         return None
 
     # Find Entry / Exit Prices
-    entry_exp = "^ENTRY:[ ]?(?P<entry_px>[1-9]*$)"
+    entry_exp = "^ENTRY:[ ]?(?P<entry_px>[0-9]*)"
     entry_px_m = re.search(entry_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
     # If entry price not found
@@ -23,14 +23,14 @@ def is_nas_trade(message: str):
         return None
     
     # Find 'Stoploss'
-    sl_exp = "^SL:[ ]?(?P<stoploss_px>[1-9]*$)"
+    sl_exp = "^SL:[ ]?(?P<stoploss_px>[0-9]*)"
     sl_px_m = re.search(sl_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
     if not sl_px_m:
         return None
     
     # Find 'TP1'
-    tp1_exp = "^TP1:[ ]?(?P<tp1_px>[1-9]*$)"
+    tp1_exp = "^TP1:[ ]?(?P<tp1_px>[0-9]*)"
     tp1_px_m = re.search(tp1_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
     if not tp1_px_m:
@@ -38,15 +38,15 @@ def is_nas_trade(message: str):
     
     # Find Remainder of TP Levels; they are not necessary for a trade to occur however
     # Find 'TP2'
-    tp2_exp = "^TP2:[ ]?(?P<tp2_px>[1-9]*$)"
+    tp2_exp = "^TP2:[ ]?(?P<tp2_px>[0-9]*)"
     tp2_px_m = re.search(tp2_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
     # Find 'TP3'
-    tp3_exp = "^TP3:[ ]?(?P<tp3_px>[1-9]*$)"
+    tp3_exp = "^TP3:[ ]?(?P<tp3_px>[0-9]*)"
     tp3_px_m = re.search(tp3_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
     # Find 'TP4'
-    tp4_exp = "^TP4:[ ]?(?P<tp4_px>[1-9]*$)"
+    tp4_exp = "^TP4:[ ]?(?P<tp4_px>[0-9]*)"
     tp4_px_m = re.search(tp4_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
     # Standardize & Clean Return Data
@@ -61,9 +61,6 @@ def is_nas_trade(message: str):
                 "tp3_px"      : None if not tp3_px_m else float(tp3_px_m['tp3_px']),
                 "tp4_px"      : None if not tp4_px_m else float(tp4_px_m['tp4_px'])
         }
-    
-    # DEBUG
-    print(out_dict['tp2_px'])
     
     return out_dict
 
@@ -89,9 +86,20 @@ if __name__ == "__main__":
                              "TP3:15705" + "\n" +\
                              "TP4: 15725"
                      
-    #print(SAMPLE_MESSAGE)
+    SAMPLE_MESSAGE3 = "FREEDOM GBP/XAU SIGNALS, [7/27/2023 12:16 PM]" + "\n" +\
+                        "NAS100 LIMIT" + "\n" +\
+                        "ENTRY:15696"
+    
+    SAMPLE_MESSAGE4 = "FREEDOM GBP/XAU SIGNALS, [7/17/2023 4:22 PM]" + "\n" +\
+                             "NAS100 BUY" + "\n" +\
+                             "ENTRY:15645" + "\n" +\
+                             "SL:15615" + "\n" +\
+                             "TP1:15665" + "\n" +\
+                             "TP2:15685" + "\n" +\
+                             "TP3:15705" + "\n" +\
+                             "TP4: 15725"
 
-    print(is_nas_trade(SAMPLE_MESSAGE2))
+    print(is_nas_trade(SAMPLE_MESSAGE4))
 
 
     # Considerations:
