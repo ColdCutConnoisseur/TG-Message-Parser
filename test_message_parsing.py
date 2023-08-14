@@ -119,17 +119,21 @@ class TestRecognitionParsing(unittest.TestCase):
         test_message = "FREEDOM GBP/XAU SIGNALS, [8/3/2023 11:26 AM]" + "\n" +\
                              "NAS100 SELL LIMIT" + "\n" +\
                              "ENTRY:" + "\n" +\
+                             "SL:15750" + "\n" +\
                              "TP1:15395" + "\n" +\
                              "TP2:15375" + "\n" +\
                              "TP3:15355" + "\n" +\
                              "TP4: 15335"
         
         m_object = is_nas_trade(test_message)
+        
+        self.assertIsNone(m_object)
 
     def test_multispace_entry_price(self):
         test_message = "FREEDOM GBP/XAU SIGNALS, [8/3/2023 11:26 AM]" + "\n" +\
                              "NAS100 SELL LIMIT" + "\n" +\
                              "ENTRY:      15400" + "\n" +\
+                             "SL:15405" + "\n" +\
                              "TP1:15395" + "\n" +\
                              "TP2:15375" + "\n" +\
                              "TP3:15355" + "\n" +\
@@ -137,7 +141,7 @@ class TestRecognitionParsing(unittest.TestCase):
         
         m_object = is_nas_trade(test_message)
 
-
+        self.assertEqual(m_object['entry_px'], float(15400))
 
     def test_no_take_profit_provided(self):
         pass

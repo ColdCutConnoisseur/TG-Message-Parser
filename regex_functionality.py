@@ -15,11 +15,13 @@ def is_nas_trade(message: str):
         return None
 
     # Find Entry / Exit Prices
-    entry_exp = "^ENTRY:[ ]?(?P<entry_px>[0-9]*)"
+    entry_exp = "^ENTRY:( *)(?P<entry_px>[0-9]*)"
     entry_px_m = re.search(entry_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
+    
+
     # If entry price not found
-    if not entry_px_m:
+    if not entry_px_m or entry_px_m['entry_px'] == '':
         return None
     
     # Find 'Stoploss'
@@ -98,8 +100,17 @@ if __name__ == "__main__":
                              "TP2:15685" + "\n" +\
                              "TP3:15705" + "\n" +\
                              "TP4: 15725"
+    
+    SAMPLE_MESSAGE5 = "FREEDOM GBP/XAU SIGNALS, [8/3/2023 11:26 AM]" + "\n" +\
+                             "NAS100 SELL LIMIT" + "\n" +\
+                             "ENTRY:" + "\n" +\
+                             "SL: 16455" + "\n" +\
+                             "TP1:15395" + "\n" +\
+                             "TP2:15375" + "\n" +\
+                             "TP3:15355" + "\n" +\
+                             "TP4: 15335"
 
-    print(is_nas_trade(SAMPLE_MESSAGE4))
+    print(is_nas_trade(SAMPLE_MESSAGE5))
 
 
     # Considerations:
