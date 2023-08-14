@@ -8,7 +8,6 @@ def is_nas_trade(message: str):
        Returns a dict that will include 'asset', 'trade_side',
        and 'order_type' attributes else None.
     """
-    DEPR_nas_case = "^NAS100 (BUY|SELL)([a-z ]*)$"
     nas_case = "(?P<asset>^NAS100) (?P<trade_side>(BUY|SELL))(?P<order_type>([a-z ]*)$)"
     m = re.search(nas_case, message, flags=re.IGNORECASE | re.MULTILINE)
 
