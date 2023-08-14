@@ -12,19 +12,61 @@ def is_nas_trade(message: str):
     nas_case = "(?P<asset>^NAS100) (?P<trade_side>(BUY|SELL))(?P<order_type>([a-z ]*)$)"
     m = re.search(nas_case, message, flags=re.IGNORECASE | re.MULTILINE)
 
-    if m:
-        # Standardize & Clean Return Data
-        out_dict = {
-                    "asset"      : str(m['asset']).upper(),
-                    "trade_side" : str(m['trade_side']).upper(),
-                    "order_type" : None if m['order_type'] == '' else str(m['order_type']).strip().upper()
-            }
-        
-        return out_dict
+    if not m:
+        return None
+
+    # Find Entry / Exit Prices
+    entry_exp = "^ENTRY:[ ]?(?P<entry_px>[1-9]*$)"
+    entry_px_m = re.search(entry_exp, message, flags=re.IGNORECASE | re.MULTILINE)
+
+    # If entry price not found
+    if not entry_px_m:
+        return None
     
-    return None
+    # Find 'Stoploss'
+    sl_exp = "^SL:[ ]?(?P<stoploss_px>[1-9]*$)"
+    sl_px_m = re.search(sl_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
+    if not sl_px_m:
+        return None
+    
+    # Find 'TP1'
+    tp1_exp = "^TP1:[ ]?(?P<tp1_px>[1-9]*$)"
+    tp1_px_m = re.search(tp1_exp, message, flags=re.IGNORECASE | re.MULTILINE)
 
+    if not tp1_px_m:
+        return None
+    
+    # Find Remainder of TP Levels; they are not necessary for a trade to occur however
+    # Find 'TP2'
+    tp2_exp = "^TP2:[ ]?(?P<tp2_px>[1-9]*$)"
+    tp2_px_m = re.search(tp2_exp, message, flags=re.IGNORECASE | re.MULTILINE)
+
+    # Find 'TP3'
+    tp3_exp = "^TP3:[ ]?(?P<tp3_px>[1-9]*$)"
+    tp3_px_m = re.search(tp3_exp, message, flags=re.IGNORECASE | re.MULTILINE)
+
+    # Find 'TP4'
+    tp4_exp = "^TP4:[ ]?(?P<tp4_px>[1-9]*$)"
+    tp4_px_m = re.search(tp4_exp, message, flags=re.IGNORECASE | re.MULTILINE)
+
+    # Standardize & Clean Return Data
+    out_dict = {
+                "asset"       : str(m['asset']).upper(),
+                "trade_side"  : str(m['trade_side']).upper(),
+                "order_type"  : 'LIMIT' if m['order_type'] == '' else str(m['order_type']).strip().upper(),
+                "entry_px"    : float(entry_px_m['entry_px']),
+                "stoploss_px" : float(sl_px_m['stoploss_px']),
+                "tp1_px"      : float(tp1_px_m['tp1_px']),
+                "tp2_px"      : None if not tp2_px_m else float(tp2_px_m['tp2_px']),
+                "tp3_px"      : None if not tp3_px_m else float(tp3_px_m['tp3_px']),
+                "tp4_px"      : None if not tp4_px_m else float(tp4_px_m['tp4_px'])
+        }
+    
+    # DEBUG
+    print(out_dict['tp2_px'])
+    
+    return out_dict
 
 
 
