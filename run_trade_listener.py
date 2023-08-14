@@ -3,6 +3,8 @@
 import os
 import sys
 
+from telethon import TelegramClient
+
 
 def assert_api_id():
     try:
@@ -19,6 +21,9 @@ def assert_api_hash():
     except KeyError:
         print("'API_HASH' not configured.  Make sure you set env 'API_HASH' before running!")
         sys.exit(0)
+
+
+
 
 
 if __name__ == "__main__":
