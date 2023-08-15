@@ -57,10 +57,6 @@ def run_trader():
     client.run_until_disconnected()
 
 
-
-
-
-
 if __name__ == "__main__":
     logging.basicConfig(filename='listener.log',
                     format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
